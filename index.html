@@ -74,9 +74,9 @@
 
     .hero-inner { position:relative; z-index:1; max-width:1100px; margin:0 auto; width:100%; display:grid; grid-template-columns:1.1fr 0.9fr; gap:64px; align-items:center; }
 
-    .hero-eyebrow { display:flex; align-items:center; gap:10px; margin-bottom:28px; flex-wrap:wrap; }
+    .hero-eyebrow { display:flex; align-items:center; gap:8px; margin-bottom:28px; flex-wrap:nowrap; white-space:nowrap; overflow:hidden; }
     .hero-dot { width:8px; height:8px; background:#22c55e; border-radius:50%; box-shadow:0 0 10px #22c55e; flex-shrink:0; animation:pulse 2s infinite; }
-    .hero-eyebrow-text { font-size:12px; color:var(--text2); letter-spacing:.1em; text-transform:uppercase; font-weight:500; }
+    .hero-eyebrow-text { font-size:11px; color:var(--text2); letter-spacing:.08em; text-transform:uppercase; font-weight:500; white-space:nowrap; }
     @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(.8)} }
 
     .hero-name { font-family:var(--font-display); font-weight:800; line-height:.95; letter-spacing:-.04em; margin-bottom:8px; }
@@ -241,11 +241,9 @@
     #scrollTop.show { opacity:1; pointer-events:auto; }
     #scrollTop:hover { transform:translateY(-3px); }
 
-    /* ===== RESPONSIVE ===== */
     @media (max-width: 900px) {
-      .hero-inner { grid-template-columns:1fr; gap:40px; }
+      .hero-inner { grid-template-columns:1fr; gap:32px; }
       .hero-visual { order:-1; }
-      /* carte centrée et qui ne dépasse pas */
       .hero-card { max-width:100%; width:100%; }
       .about-grid, .contact-grid, .formation-grid { grid-template-columns:1fr; gap:24px; }
       .projects-grid { grid-template-columns:1fr 1fr; }
@@ -258,29 +256,28 @@
     @media (max-width: 600px) {
       .nav-links, .nav-cta { display:none; }
       .hamburger { display:block; }
-      /* hero : nom plus petit sur mobile */
       .hero-name-first, .hero-name-last { font-size:clamp(2.8rem,12vw,4rem); }
-      #hero { padding:100px 20px 60px; }
-      /* carte hero : stats sur mobile */
+      #hero { padding:90px 16px 50px; }
+      .hero-inner { gap:24px; }
+      /* eyebrow : tronquer proprement si trop long */
+      .hero-eyebrow { gap:6px; }
+      .hero-eyebrow-text { font-size:10px; letter-spacing:.05em; }
       .hero-stat-row { grid-template-columns:repeat(3,1fr); }
       .hero-stat-num { font-size:18px; }
       .hero-stat-lbl { font-size:8px; }
       .hero-stat { padding:10px 4px; }
-      /* projets */
       .projects-grid { grid-template-columns:1fr; }
       .project-card.featured { grid-column:span 1; }
-      /* cert */
       .cert-card { flex-direction:column; align-items:flex-start; gap:16px; }
-      /* contact */
       .footer-inner { flex-direction:column; text-align:center; }
       .footer-links { justify-content:center; flex-wrap:wrap; }
-      section { padding:60px 16px; }
+      section { padding:56px 16px; }
       nav { padding:0 16px; }
     }
 
     @media (max-width: 380px) {
-      .hero-name-first, .hero-name-last { font-size:2.5rem; }
-      .hero-stat-row { grid-template-columns:1fr 1fr 1fr; }
+      .hero-name-first, .hero-name-last { font-size:2.4rem; }
+      .hero-eyebrow-text { font-size:9px; }
     }
   </style>
 </head>
