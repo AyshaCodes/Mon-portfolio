@@ -229,6 +229,7 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:24px 32p
   .process-grid::before{display:none}
   nav{padding:0 20px}
   section{padding:80px 20px}
+  .hero-h1{font-size:clamp(2.8rem,10vw,4.5rem)}
 }
 @media(max-width:600px){
   .nav-links,.nav-cta{display:none}
@@ -236,9 +237,17 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:24px 32p
   .works-grid{grid-template-columns:1fr}
   .wcard.feat{grid-column:span 1}
   .process-grid{grid-template-columns:1fr}
-  #hero{padding-top:80px}
-  .hero-inner{padding:0 20px}
+  #hero{min-height:100svh;padding-top:0}
+  .hero-inner{padding:88px 20px 48px}
+  .hero-h1{font-size:clamp(2.2rem,9vw,3rem);letter-spacing:-.03em;margin-bottom:20px}
+  .hero-eyebrow{font-size:10px;margin-bottom:20px}
+  .hero-sub{font-size:14px;margin-bottom:28px}
+  .hero-btns{gap:10px}
+  .btn-or,.btn-ghost{padding:11px 20px;font-size:13px}
+  .hero-scroll{display:none}
   section{padding:60px 16px}
+  .cur,.cur-ring{display:none}
+  body{cursor:auto}
 }
 </style>
 </head>
@@ -637,14 +646,14 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:24px 32p
         </div>
       </div>
       <div class="reveal d2">
-        <form class="cform" onsubmit="handleForm(event)">
+        <form class="cform" id="contactForm">
           <div class="cform-head">Parlez-moi de votre projet</div>
           <div class="cform-sub">Je vous réponds dans les 24h avec une première estimation.</div>
-          <div class="ff"><label>Nom complet</label><input type="text" placeholder="Votre nom" required></div>
-          <div class="ff"><label>Email</label><input type="email" placeholder="votre@email.com" required></div>
+          <div class="ff"><label>Nom complet</label><input type="text" name="nom" placeholder="Votre nom" required></div>
+          <div class="ff"><label>Email</label><input type="email" name="email" placeholder="votre@email.com" required></div>
           <div class="ff">
             <label>Type de projet</label>
-            <select>
+            <select name="type_projet">
               <option value="">Sélectionner...</option>
               <option>Site vitrine / Landing page</option>
               <option>E-commerce Shopify</option>
@@ -654,8 +663,14 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:24px 32p
               <option>Autre</option>
             </select>
           </div>
-          <div class="ff"><label>Message</label><textarea rows="4" placeholder="Décrivez votre projet en quelques lignes..." required></textarea></div>
+          <div class="ff"><label>Message</label><textarea name="message" rows="4" placeholder="Décrivez votre projet en quelques lignes..." required></textarea></div>
           <button type="submit" class="form-btn" id="fbtn">Envoyer <i class="fa-solid fa-paper-plane"></i></button>
+          <div id="form-ok" style="display:none;margin-top:14px;padding:12px 16px;background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.25);border-radius:10px;color:#22c55e;font-family:var(--font-c);font-size:12px;text-align:center;">
+            ✓ Message envoyé ! Je vous réponds dans les 24h.
+          </div>
+          <div id="form-err" style="display:none;margin-top:14px;padding:12px 16px;background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.25);border-radius:10px;color:#ef4444;font-family:var(--font-c);font-size:12px;text-align:center;">
+            Erreur — contactez-moi directement : soumarehaicha@gmail.com
+          </div>
         </form>
       </div>
     </div>
@@ -727,13 +742,33 @@ const st=document.getElementById('st');
 window.addEventListener('scroll',()=>st.classList.toggle('show',scrollY>400));
 st.addEventListener('click',()=>scrollTo({top:0,behavior:'smooth'}));
 
-// ── FORM ──
-function handleForm(e){
+// ── FORM (Formspree) ──
+// 1. Créer un compte gratuit sur formspree.io
+// 2. Créer un formulaire → copier l'ID
+document.getElementById('contactForm').addEventListener('submit', async function(e){
   e.preventDefault();
-  const b=document.getElementById('fbtn');
-  b.innerHTML='Envoyé ✓';b.style.background='#059669';
-  setTimeout(()=>{b.innerHTML='Envoyer <i class="fa-solid fa-paper-plane"></i>';b.style.background='';e.target.reset()},3000)
-}
+  const btn=document.getElementById('fbtn');
+  const ok=document.getElementById('form-ok');
+  const err=document.getElementById('form-err');
+  btn.disabled=true;
+  btn.innerHTML='<i class="fa-solid fa-spinner fa-spin"></i> Envoi...';
+  ok.style.display='none'; err.style.display='none';
+  try{
+    const res=await fetch('https://formspree.io/f/xpqvwgvy',{
+      method:'POST',
+      body:new FormData(this),
+      headers:{'Accept':'application/json'}
+    });
+    if(res.ok){
+      ok.style.display='block';
+      this.reset();
+    } else { throw new Error(); }
+  } catch(e){
+    err.style.display='block';
+  }
+  btn.disabled=false;
+  btn.innerHTML='Envoyer <i class="fa-solid fa-paper-plane"></i>';
+});
 
 // ── THREE.JS HERO  OCÉAN DE DONNÉES ──
 (function(){
