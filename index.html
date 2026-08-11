@@ -11,7 +11,7 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&family=Fira+Code:wght@300;400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&family=Fira+Code:wght@300;400&family=Great+Vibes&display=swap" rel="stylesheet">
 
 <!-- ══ CDN AVEC SRI (Intégrité) ══ -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" 
@@ -78,16 +78,40 @@ body{
   background:#080808;
   display:flex;flex-direction:column;
   align-items:center;justify-content:center;
-  transform:scale(1);
-  transition:opacity .8s var(--ease),visibility .8s,transform .7s var(--ease);
+  transition:opacity .9s var(--ease),visibility .9s;
 }
-#loader.out{
-  opacity:0;
-  visibility:hidden;
-  transform:scale(1.2);
+#loader.out{opacity:0;visibility:hidden}
+
+/* Signature SVG */
+.loader-sig-wrap{
+  display:flex;flex-direction:column;align-items:center;gap:16px;
 }
 
-.loader-word{display:flex;gap:0;overflow:hidden;}
+/* Signature cursive */
+.loader-sig-text{
+  font-family:'Great Vibes', cursive;
+  font-size:clamp(5rem,16vw,12rem);
+  color:#F2F2F2;
+  line-height:1.1;
+  /* Effet tracé : clip-path reveal de gauche à droite */
+  clip-path:inset(0 100% 0 0);
+  transition:clip-path 1.4s cubic-bezier(.77,0,.175,1);
+  white-space:nowrap;
+}
+.loader-sig-text.draw{clip-path:inset(0 0% 0 0)}
+
+/* Ligne dorée qui se trace sous la signature */
+.loader-sig-line{
+  height:1px;background:var(--or);
+  width:0;
+  transition:width 1s cubic-bezier(.77,0,.175,1) .8s;
+  align-self:center;
+  opacity:.7;
+}
+.loader-sig-line.draw{width:clamp(180px,35vw,420px)}
+
+/* Ancien loader-letter gardé pour compatibilité */
+.loader-word{display:none}
 .loader-letter{
   font-family:var(--font-d);
   font-size:clamp(4rem,18vw,14rem);
@@ -405,44 +429,145 @@ section{padding:96px 32px}
 .sf-cta:hover{opacity:.85}
 
 /* ══════════════════════════════════════
-   WORKS (Projets)
+   WORKS — layout éditorial Behance
 ══════════════════════════════════════ */
-#works{background:var(--bg2)}
-.works-tabs{display:flex;gap:8px;margin-bottom:40px;flex-wrap:wrap}
-.wtab{padding:7px 18px;border-radius:999px;font-size:13px;font-weight:500;font-family:var(--font-b);cursor:none;border:1px solid var(--border2);background:transparent;color:var(--text2);transition:all .2s}
-.wtab.active{background:var(--or);border-color:var(--or);color:#080808;font-weight:700}
-.wtab:hover:not(.active){border-color:var(--border);color:var(--text)}
-.works-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+#works{
+  background:var(--bg);
+  position:relative;overflow:hidden;
+}
+/* Logo en filigrane fond */
+#works .works-bg-logo{
+  position:absolute;
+  top:50%;left:50%;
+  transform:translate(-50%,-50%);
+  width:min(700px,90vw);
+  opacity:.025;
+  pointer-events:none;user-select:none;
+  filter:blur(1px);
+  transition:opacity .4s;
+}
+[data-theme="light"] #works .works-bg-logo{opacity:.04}
+
+.works-header{
+  display:flex;align-items:flex-end;justify-content:space-between;
+  gap:24px;flex-wrap:wrap;margin-bottom:48px;position:relative;z-index:2;
+}
+.works-tabs{display:flex;gap:0;flex-wrap:wrap}
+.wtab{
+  padding:8px 20px;font-size:12px;font-weight:500;
+  font-family:var(--font-b);cursor:none;
+  border:1px solid var(--border);background:transparent;color:var(--text2);
+  transition:all .2s;letter-spacing:.02em;
+  border-radius:0;margin-left:-1px;
+}
+.wtab:first-child{border-radius:3px 0 0 3px;margin-left:0}
+.wtab:last-child{border-radius:0 3px 3px 0}
+.wtab.active{background:var(--text);border-color:var(--text);color:var(--bg);font-weight:700;z-index:1}
+.wtab:hover:not(.active){border-color:var(--border);color:var(--text);z-index:1}
+
+/* Compteur projets */
+.works-count{
+  font-family:var(--font-c);font-size:11px;color:var(--text3);
+  letter-spacing:.08em;
+}
+
+/* Grid éditoriale asymétrique */
+.works-grid{display:grid;gap:2px;position:relative;z-index:2}
 .works-grid.hidden{display:none}
+
+/* Layout par défaut — 3 cols */
+.works-grid{grid-template-columns:repeat(3,1fr)}
+
+/* Projet featured — pleine largeur + style éditorial */
 .wcard{
-  background:var(--bg);border:1px solid var(--border2);border-radius:8px;
+  background:var(--bg2);border:none;
   overflow:hidden;display:flex;flex-direction:column;
-  transition:border-color .3s,transform .3s,box-shadow .3s;
+  transition:transform .4s cubic-bezier(.4,0,.2,1);
+  position:relative;
 }
-.wcard:hover{border-color:var(--border);transform:translateY(-4px);box-shadow:0 20px 40px -12px rgba(0,0,0,.4)}
-.wcard.feat{grid-column:span 2}
+.wcard::after{
+  content:'';position:absolute;inset:0;
+  background:var(--or);opacity:0;
+  transition:opacity .3s;pointer-events:none;
+  mix-blend-mode:overlay;
+}
+.wcard:hover{transform:scale(.99)}
+.wcard:hover::after{opacity:.03}
+
+/* Featured = full width row */
+.wcard.feat{grid-column:1/-1;flex-direction:row}
+.wcard.feat .wthumb{flex:0 0 55%;height:320px}
+.wcard.feat .wbody-wrap{flex:1;display:flex;flex-direction:column;justify-content:flex-end;padding:36px}
+.wcard.feat .wbody{padding:0;gap:10px}
+.wcard.feat .wfooter{padding:0;border:none;margin-top:24px}
+
 .wthumb{
-  height:180px;display:flex;align-items:center;justify-content:center;
-  position:relative;overflow:hidden;font-size:48px;
+  height:200px;display:flex;align-items:center;justify-content:center;
+  position:relative;overflow:hidden;font-size:52px;
+  background:var(--bg3);
 }
-.wthumb.tall{height:220px}
-.wbadges{display:flex;gap:7px;padding:14px 16px 0;flex-wrap:wrap}
-.wbadge{display:inline-flex;align-items:center;padding:3px 9px;border-radius:999px;font-size:9px;font-weight:700;letter-spacing:.05em;text-transform:uppercase}
+.wthumb.tall{height:260px}
+
+/* Overlay hover sur thumb */
+.wthumb::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(to top,rgba(8,8,8,.6),transparent);
+}
+
+/* Numéro de projet en fond du thumb */
+.wthumb-num{
+  position:absolute;bottom:12px;right:14px;z-index:2;
+  font-family:var(--font-d);font-size:10px;font-weight:800;
+  color:rgba(255,255,255,.25);letter-spacing:.06em;
+}
+
+.wbadges{display:flex;gap:6px;padding:16px 18px 0;flex-wrap:wrap}
+.wbadge{
+  display:inline-flex;padding:3px 9px;border-radius:2px;
+  font-size:9px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+  font-family:var(--font-c);
+}
 .b-or{background:rgba(200,164,74,.1);color:var(--or);border:1px solid rgba(200,164,74,.2)}
 .b-v{background:rgba(124,58,237,.1);color:var(--violet2);border:1px solid rgba(124,58,237,.2)}
 .b-c{background:rgba(6,182,212,.08);color:var(--cyan);border:1px solid rgba(6,182,212,.15)}
 .b-g{background:rgba(52,211,153,.08);color:#34d399;border:1px solid rgba(52,211,153,.15)}
 .b-p{background:rgba(244,114,182,.08);color:#f472b6;border:1px solid rgba(244,114,182,.15)}
-.wbody{padding:14px 16px 18px;flex:1;display:flex;flex-direction:column;gap:6px}
-.wtitle{font-family:var(--font-d);font-size:15px;font-weight:700;color:var(--text)}
+
+.wbody{padding:14px 18px 20px;flex:1;display:flex;flex-direction:column;gap:6px}
+.wbody-wrap{} /* pour feat */
+
+.wtitle{
+  font-family:var(--font-d);font-size:16px;font-weight:700;
+  color:var(--text);line-height:1.2;
+}
+.wcard.feat .wtitle{font-size:clamp(1.4rem,2.5vw,2rem)}
+
 .wdesc{font-size:12px;color:var(--text2);line-height:1.65;flex:1}
+.wcard.feat .wdesc{font-size:14px;max-width:380px}
+
 .wstack{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px}
-.wstag{padding:2px 8px;border-radius:4px;font-size:10px;font-weight:500;background:var(--border2);color:var(--text3);font-family:var(--font-c)}
-.wfooter{padding:10px 16px;border-top:1px solid var(--border2);display:flex;gap:8px}
-.wlink{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:500;color:var(--text2);text-decoration:none;padding:5px 12px;border-radius:7px;background:var(--border2);border:1px solid transparent;transition:all .2s}
+.wstag{
+  padding:2px 8px;border-radius:2px;font-size:10px;font-weight:500;
+  background:var(--border2);color:var(--text3);font-family:var(--font-c);
+  border:1px solid var(--border2);
+}
+
+.wfooter{padding:10px 18px;border-top:1px solid var(--border2);display:flex;gap:8px;align-items:center}
+.wcard.feat .wfooter{border-top:none;padding:0}
+
+.wlink{
+  display:inline-flex;align-items:center;gap:5px;
+  font-size:11px;font-weight:600;color:var(--text2);
+  text-decoration:none;padding:7px 14px;border-radius:2px;
+  background:var(--border2);border:1px solid transparent;
+  transition:all .2s;font-family:var(--font-b);letter-spacing:.02em;
+}
 .wlink:hover{border-color:var(--or);color:var(--or)}
-.wlink.main{background:rgba(200,164,74,.1);border-color:rgba(200,164,74,.25);color:var(--or)}
-.wlink.main:hover{background:rgba(200,164,74,.2)}
+.wlink.main{
+  background:var(--or);color:#080808;border-color:var(--or);
+  font-weight:700;
+}
+.wlink.main:hover{opacity:.85}
 
 /* ══════════════════════════════════════
    ABOUT
@@ -620,7 +745,8 @@ footer{
   .pstep:nth-child(3){border-top:1px solid var(--border)}
   .pstep:nth-child(4){border-top:1px solid var(--border);border-right:none}
   .works-grid{grid-template-columns:1fr 1fr}
-  .wcard.feat{grid-column:span 2}
+  .wcard.feat{grid-column:1/-1;flex-direction:row}
+  .wcard.feat .wthumb{flex:0 0 50%;height:260px}
 }
 @media(max-width:768px){
   nav{padding:0 20px}
@@ -642,7 +768,10 @@ footer{
   footer{padding:16px 20px}
   .hero-bg-text{font-size:clamp(8rem,25vw,20rem)}
   .works-grid{grid-template-columns:1fr}
-  .wcard.feat{grid-column:span 1}
+  .wcard.feat{grid-column:1/-1;flex-direction:column}
+  .wcard.feat .wthumb{flex:none;height:200px;width:100%}
+  .wcard.feat .wbody-wrap{padding:20px}
+  .works-header{flex-direction:column;align-items:flex-start}
 }
 @media(max-width:480px){
   .hero-h1{font-size:clamp(3rem,12vw,5rem)}
@@ -662,14 +791,11 @@ footer{
 
 <!-- ══ LOADER AMÉLIORÉ ══ -->
 <div id="loader">
-  <div class="loader-word" id="loaderWord">
-    <span class="loader-letter">A</span>
-    <span class="loader-letter">Y</span>
-    <span class="loader-letter">S</span>
-    <span class="loader-letter or">H</span>
-    <span class="loader-letter or">A</span>
+  <div class="loader-sig-wrap">
+    <div class="loader-sig-text" id="loaderSig">Aysha</div>
+    <div class="loader-sig-line" id="loaderLine"></div>
+    <div class="loader-sub" id="loaderSub">Design · Code · Innovation</div>
   </div>
-  <div class="loader-sub" id="loaderSub">Design · Code · Innovation</div>
   <div class="loader-bar-wrap"><div class="loader-bar" id="loaderBar"></div></div>
 </div>
 
@@ -816,31 +942,52 @@ footer{
 
 <!-- ══ WORKS ══ -->
 <section id="works">
-  <div class="container">
-    <p class="s-label reveal">Portfolio</p>
-    <h2 class="s-title reveal d1">Mes réalisations</h2>
-    <p class="s-desc reveal d2">Projets concrets, déployés et fonctionnels — du front-end à l'application mobile.</p>
-    <div class="works-tabs reveal d3">
-      <button class="wtab active" data-tab="live">Projets live</button>
-      <button class="wtab" data-tab="client">Clients</button>
-      <button class="wtab" data-tab="acad">Académiques</button>
+  <!-- Logo AyshaCodes en filigrane fond -->
+  <img class="works-bg-logo" src="https://i.imgur.com/placeholder.png" alt=""
+    onerror="this.style.display='none'"
+    aria-hidden="true"/>
+  <!-- SVG silhouette en filigrane (fallback si image indisponible) -->
+  <svg class="works-bg-logo" viewBox="0 0 500 500" aria-hidden="true" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:min(600px,80vw);opacity:.03;pointer-events:none">
+    <text x="50%" y="55%" text-anchor="middle" dominant-baseline="middle"
+      font-family="Syne,sans-serif" font-size="180" font-weight="800"
+      letter-spacing="-8" fill="currentColor">AC</text>
+  </svg>
+
+  <div class="container" style="position:relative;z-index:2">
+    <div class="works-header">
+      <div>
+        <p class="s-label reveal">Portfolio</p>
+        <h2 class="s-title reveal d1" style="margin-bottom:0">Mes réalisations</h2>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:12px">
+        <span class="works-count reveal">— 8 projets</span>
+        <div class="works-tabs reveal d1">
+          <button class="wtab active" data-tab="live">Live</button>
+          <button class="wtab" data-tab="client">Clients</button>
+          <button class="wtab" data-tab="acad">Académiques</button>
+        </div>
+      </div>
     </div>
 
     <!-- LIVE -->
     <div class="works-grid" id="tab-live">
-      <div class="wcard feat">
-        <div class="wthumb tall" style="background:linear-gradient(135deg,#070711,#001520)">
-          <span style="opacity:.2;font-size:64px">🕌</span>
+      <!-- Featured — pleine largeur -->
+      <div class="wcard feat reveal">
+        <div class="wthumb tall" style="background:linear-gradient(135deg,#0a0a1a,#001528);flex:0 0 55%;height:320px">
+          <span style="position:relative;z-index:2;opacity:.15;font-size:80px">🕌</span>
+          <div class="wthumb-num">01</div>
         </div>
-        <div class="wbadges"><span class="wbadge b-or">Live</span><span class="wbadge b-c">App web</span></div>
-        <div class="wbody">
-          <div class="wtitle">Hifz Al-Quran</div>
-          <div class="wdesc">Application de mémorisation du Coran — suivi de progression, lecture interactive, déployée sur Vercel. Pensée pour la communauté francophone musulmane.</div>
-          <div class="wstack"><span class="wstag">HTML/CSS</span><span class="wstag">JavaScript</span><span class="wstag">API Coran</span></div>
-        </div>
-        <div class="wfooter">
-          <a href="https://hifz-al-quran-srld.vercel.app/" target="_blank" class="wlink main"><i class="fa-solid fa-arrow-up-right-from-square" style="font-size:10px"></i> Voir le projet</a>
-          <a href="https://github.com/AyshaCodes" target="_blank" class="wlink"><i class="fa-brands fa-github"></i> GitHub</a>
+        <div class="wbody-wrap">
+          <div class="wbadges" style="padding:0 0 12px 0"><span class="wbadge b-or">Live</span><span class="wbadge b-c">App web</span></div>
+          <div class="wbody" style="padding:0">
+            <div class="wtitle">Hifz Al-Quran</div>
+            <div class="wdesc">Application de mémorisation du Coran — suivi de progression, lecture interactive. Pensée pour la communauté francophone musulmane.</div>
+            <div class="wstack"><span class="wstag">HTML/CSS</span><span class="wstag">JavaScript</span><span class="wstag">API Coran</span></div>
+          </div>
+          <div class="wfooter" style="padding:0;border:none;margin-top:24px">
+            <a href="https://hifz-al-quran-srld.vercel.app/" target="_blank" class="wlink main"><i class="fa-solid fa-arrow-up-right-from-square" style="font-size:10px"></i> Voir le projet</a>
+            <a href="https://github.com/AyshaCodes" target="_blank" class="wlink"><i class="fa-brands fa-github"></i> GitHub</a>
+          </div>
         </div>
       </div>
       <div class="wcard">
@@ -889,19 +1036,21 @@ footer{
 
     <!-- CLIENTS (Joya & Refuge) -->
     <div class="works-grid hidden" id="tab-client">
-      <div class="wcard feat">
-        <div class="wthumb tall" style="background:linear-gradient(135deg,#1a0a0a,#0a0a05)">
-          <span style="opacity:.2;font-size:64px">🌸</span>
+      <div class="wcard feat reveal">
+        <div class="wthumb tall" style="background:linear-gradient(135deg,#1a0808,#0a0808);flex:0 0 55%;height:320px">
+          <span style="position:relative;z-index:2;opacity:.15;font-size:80px">🌸</span>
+          <div class="wthumb-num">01</div>
         </div>
-        <div class="wbadges"><span class="wbadge b-or">Client</span><span class="wbadge b-g">Branding</span></div>
-        <div class="wbody">
-          <div class="wtitle">Joya — Cosmétiques Marocains</div>
-          <div class="wdesc">Création de l'identité visuelle complète (logo, palette, étiquettes) pour une marque marocaine de cosmétiques naturels. Un univers doux, élégant et artisanal.</div>
-          <div class="wstack"><span class="wstag">Logo</span><span class="wstag">Branding</span><span class="wstag">Étiquettes</span><span class="wstag">Packaging</span></div>
-        </div>
-        <div class="wfooter">
-          <a href="https://www.instagram.com/ayshacodes" target="_blank" class="wlink main"><i class="fa-solid fa-eye"></i> Voir sur Instagram</a>
-          <span style="font-size:11px;color:var(--text3);display:flex;align-items:center;gap:6px"><i class="fa-solid fa-lock" style="font-size:10px"></i> Client</span>
+        <div class="wbody-wrap">
+          <div class="wbadges" style="padding:0 0 12px 0"><span class="wbadge b-or">Client</span><span class="wbadge b-g">Branding</span></div>
+          <div class="wbody" style="padding:0">
+            <div class="wtitle">Joya — Cosmétiques Marocains</div>
+            <div class="wdesc">Identité visuelle complète — logo, palette, étiquettes pour une marque marocaine de cosmétiques naturels. Un univers doux, élégant et artisanal.</div>
+            <div class="wstack"><span class="wstag">Logo</span><span class="wstag">Branding</span><span class="wstag">Étiquettes</span><span class="wstag">Packaging</span></div>
+          </div>
+          <div class="wfooter" style="padding:0;border:none;margin-top:24px">
+            <a href="https://www.instagram.com/ayshacodes" target="_blank" class="wlink main"><i class="fa-solid fa-eye"></i> Voir sur Instagram</a>
+          </div>
         </div>
       </div>
       <div class="wcard">
@@ -1139,20 +1288,24 @@ footer{
 <script>
 // ══ LOADER AMÉLIORÉ ══
 window.addEventListener('load', () => {
-  const letters = document.querySelectorAll('.loader-letter');
+  // Loader — Signature cursive animée
+  const sig = document.getElementById('loaderSig');
+  const line = document.getElementById('loaderLine');
   const sub = document.getElementById('loaderSub');
   const bar = document.getElementById('loaderBar');
   const loader = document.getElementById('loader');
 
-  letters.forEach((l, i) => {
-    setTimeout(() => l.classList.add('in'), 100 + i * 120);
-  });
-  setTimeout(() => sub.classList.add('in'), 800);
-  setTimeout(() => bar.classList.add('fill'), 200);
+  // Déclencher les animations
+  setTimeout(() => sig && sig.classList.add('draw'), 100);
+  setTimeout(() => line && line.classList.add('draw'), 600);
+  setTimeout(() => sub && sub.classList.add('in'), 1100);
+  setTimeout(() => bar && bar.classList.add('fill'), 200);
+
+  // Disparition du loader
   setTimeout(() => {
     loader.classList.add('out');
     document.body.style.overflow = '';
-  }, 2200);
+  }, 2600);
 });
 document.body.style.overflow = 'hidden';
 
